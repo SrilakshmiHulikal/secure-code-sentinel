@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      - DATABASE_URL=sqlite:///./data/sentinel.db
+      - CORS_ORIGINS=http://localhost:5173,http://localhost:80,http://frontend
+    volumes:
+      - db_data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  db_data:
